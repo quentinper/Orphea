@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orphéa - Piano</title>
+    <script src="midiplayer.js"></script>
+    <style>
+        :root {
+            --bg-color: #121217;
+            --card-bg: #1e1e26;
+            --text-color: #f0f0f0;
+            --accent-color: #00d4ff;
+            --led-off: #ff4b2b;
+            --led-on: #39ff14;
+            --btn-idle: #3d3d4d;
+        }
+
+        body {
+            margin: 0; padding: 20px;
+            display: flex; flex-direction: column;
+            align-items: center; min-height: 100vh;
+            background-color: var(--bg-color);
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            color: var(--text-color);
+            user-select: none; -webkit-user-select: none;
+        }
+
+        .status-bar {
+            width: 100%; max-width: 1100px;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 15px; padding: 15px 25px;
+            background: var(--card-bg); border-radius: 12px;
+            border: 1px solid #333; box-sizing: border-box;
+        }
+
+        .connexion-status { display: flex; align-items: center; gap: 12px; }
+        
+        #led-voyant {
+            width: 14px; height: 14px; border-radius: 50%;
+            background-color: var(--led-off);
+            box-shadow: 0 0 8px var(--led-off);
+            transition: all 0.3s ease;
+        }
+
+        #led-voyant.connected {
+            background-color: var(--led-on);
+            box-shadow: 0 0 15px var(--led-on);
+        }
+
+        .mode-selector {
+            width: 100%; max-width: 1100px;
+            display: flex; justify-content: center; gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .controls {
+            background: var(--card-bg); padding: 25px; border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            margin-bottom: 30px; width: 100%; max-width: 600px;
+            text-align: center; border: 1px solid #444;
+            transition: all 0.3s ease;
+        }
+
+        .hidden { display: none !important; }
+
+        .btn {
+            padding: 12px 20px; border: none; border-radius: 8px;
+            cursor: pointer; margin: 5px; font-weight: bold;
+            text-transform: uppercase; transition: all 0.2s;
+            background: var(--btn-idle); color: white;
+            display: inline-flex; align-items: center; justify-content: center;
+        }
+
+        .btn-mode-active {
+            background: var(--accent-color) !important;
+            color: #000 !important;
+            box-shadow: 0 0 15px var(--accent-color);
+        }
+
+        .btn-upload {
+            background: #252531 !important;
+            border: 2px dashed #555 !important;
+            color: var(--accent-color) !important;
+            width: 80%; padding: 20px !important;
+            margin: 10px auto 20px auto;
+            display: inline-block;
+            border-radius: 8px;
+        }
+        .btn-upload:hover { border-color: var(--accent-color) !important; background: #2a2a3a !important; }
+
+        .btn-play { background: #2ecc71; }
+        .btn-stop { background: #e74c3c; }
+
+        .piano {
+            position: relative; width: 100%; max-width: 1100px;
+            height: 280px; display: flex;
+            background: #000; padding: 10px; border-radius: 12px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            border: 4px solid #222;
+        }
+
+        .white {
+            flex: 1; border: 1px solid #111;
+            background: linear-gradient(to bottom, #eee 0%, #fff 100%);
+            border-radius: 0 0 6px 6px; cursor: pointer;
+            display: flex; justify-content: center; align-items: flex-end;
+            padding-bottom: 15px; position: relative; z-index: 1;
+        }
+
+        .white.active {
+            background: linear-gradient(to bottom, #fff 0%, var(--accent-color) 100%);
+            transform: translateY(2px);
+        }
+
+        .black-container {
+            position: absolute; top: 10px; left: 10px;
+            width: calc(100% - 20px); height: 60%; pointer-events: none; z-index: 2;
+        }
+
+        .black {
+            position: absolute; width: 4.2%; height: 100%;
+            background: linear-gradient(to bottom, #444 0%, #000 100%);
+            border-radius: 0 0 4px 4px; cursor: pointer;
+            pointer-events: auto; color: #888; font-size: 0.6rem;
+            display: flex; justify-content: center; align-items: flex-end;
+            padding-bottom: 10px; border: 1px solid #222;
+        }
+
+        .black.active { background: linear-gradient(to bottom, #111 0%, var(--accent-color) 100%); }
+
+        .white span { color: #333; font-weight: bold; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+
+    <div class="status-bar">
+        <div style="font-size: 1.4rem; font-weight: bold; letter-spacing: 2px;">ORPHÉA <span style="color:var(--accent-color)">CONSOLE</span></div>
+        <div class="connexion-status">
+            <span id="status-text" style="color: var(--led-off)">HORS-LIGNE</span>
+            <div id="led-voyant"></div>
+        </div>
+    </div>
+
+    <div class="mode-selector">
+        <button id="btn-semi" class="btn" onclick="setMode('semi')">Mode Semi-Auto</button>
+        <button id="btn-auto" class="btn" onclick="setMode('auto')">Mode Automatique</button>
+    </div>
+
+    <div id="midi-panel" class="controls hidden">
+        <label for="midiFileInput" class="btn btn-upload" id="upload-label">
+            📁 Sélectionner une partition .mid
+        </label>
+        <input type="file" id="midiFileInput" accept=".mid" style="display:none;">
+        
+        <div style="margin-top:10px;">
+            <button class="btn btn-play" onclick="Player.play()">Lecture</button>
+            <button class="btn" onclick="Player.pause()">Pause</button>
+            <button class="btn btn-stop" onclick="handleStop()">Stop</button>
+        </div>
+        <p id="file-info" style="font-size: 0.8rem; color: #888; margin-top: 15px;">Aucun fichier chargé</p>
+    </div>
+
+    <div class="piano">
+        <div class="white" data-note="C3"><span>C3</span></div>
+        <div class="white" data-note="D3"><span>D3</span></div>
+        <div class="white" data-note="E3"><span>E3</span></div>
+        <div class="white" data-note="F3"><span>F3</span></div>
+        <div class="white" data-note="G3"><span>G3</span></div>
+        <div class="white" data-note="A3"><span>A3</span></div>
+        <div class="white" data-note="B3"><span>B3</span></div>
+        <div class="white" data-note="C4"><span>C4</span></div>
+        <div class="white" data-note="D4"><span>D4</span></div>
+        <div class="white" data-note="E4"><span>E4</span></div>
+        <div class="white" data-note="F4"><span>F4</span></div>
+        <div class="white" data-note="G4"><span>G4</span></div>
+        <div class="white" data-note="A4"><span>A4</span></div>
+        <div class="white" data-note="B4"><span>B4</span></div>
+
+        <div class="black-container">
+            <div class="black" style="left: 5.1%" data-note="C3#">C3#</div>
+            <div class="black" style="left: 12.2%" data-note="D3#">D3#</div>
+            <div class="black" style="left: 26.5%" data-note="F3#">F3#</div>
+            <div class="black" style="left: 33.6%" data-note="G3#">G3#</div>
+            <div class="black" style="left: 40.7%" data-note="A3#">A3#</div>
+            <div class="black" style="left: 55.1%" data-note="C4#">C4#</div>
+            <div class="black" style="left: 62.2%" data-note="D4#">D4#</div>
+            <div class="black" style="left: 76.5%" data-note="F4#">F4#</div>
+            <div class="black" style="left: 83.6%" data-note="G4#">G4#</div>
+            <div class="black" style="left: 90.7%" data-note="A4#">A4#</div>
+        </div>
+    </div>
+
+<script>
+    const noteToMidi = {
+        "C3": 60, "C3#": 61, "D3": 62, "D3#": 63, "E3": 64, "F3": 65, "F3#": 66, "G3": 67, "G3#": 68, "A3": 69, "A3#": 70, "B3": 71,
+        "C4": 72, "C4#": 73, "D4": 74, "D4#": 75, "E4": 76, "F4": 77, "F4#": 78, "G4": 79, "G4#": 80, "A4": 81, "A4#": 82, "B4": 83
+    };
+
+    // --- SÉCURITÉ : Ensemble pour suivre TOUTES les notes MIDI actives (0-127) ---
+    let activeMidiNotes = new Set();
+
+    let websocket;
+    const gateway = `ws://${window.location.hostname}/ws`;
+
+    // Fonction d'arrêt d'urgence
+    function handleStop() {
+        if(window.Player) Player.stop();
+        
+        // On envoie un Note Off (0x80) à TOUTES les notes mémorisées dans le Set
+        activeMidiNotes.forEach(midiNote => {
+            sendMidi(0x80, midiNote, 0);
+            
+            // Nettoyage visuel sur l'IHM
+            const noteName = Object.keys(noteToMidi).find(key => noteToMidi[key] === midiNote);
+            if (noteName) {
+                const keyEl = document.querySelector(`[data-note="${noteName}"]`);
+                if (keyEl) keyEl.classList.remove('active');
+            }
+        });
+        
+        activeMidiNotes.clear();
+    }
+
+    function setMode(mode) {
+        const panel = document.getElementById('midi-panel');
+        document.getElementById('btn-semi').classList.toggle('btn-mode-active', mode === 'semi');
+        document.getElementById('btn-auto').classList.toggle('btn-mode-active', mode === 'auto');
+
+        if (mode === 'auto') panel.classList.remove('hidden');
+        else {
+            panel.classList.add('hidden');
+            handleStop();
+        }
+    }
+
+    function initWebSocket() {
+        websocket = new WebSocket(gateway);
+        websocket.binaryType = "arraybuffer";
+        
+        websocket.onopen = () => {
+            document.getElementById('led-voyant').classList.add('connected');
+            document.getElementById('status-text').innerText = "EN LIGNE";
+            document.getElementById('status-text').style.color = "var(--led-on)";
+        };
+        
+        websocket.onclose = () => {
+            document.getElementById('led-voyant').classList.remove('connected');
+            document.getElementById('status-text').innerText = "HORS-LIGNE";
+            document.getElementById('status-text').style.color = "var(--led-off)";
+            setTimeout(initWebSocket, 2000);
+        };
+    }
+
+    function sendMidi(s, n, v) {
+        if (websocket && websocket.readyState === WebSocket.OPEN) {
+            websocket.send(new Uint8Array([s, n, v])); 
+            
+            // Logique de suivi pour la sécurité
+            if (s === 0x90 && v > 0) activeMidiNotes.add(n);
+            else if (s === 0x80 || (s === 0x90 && v === 0)) activeMidiNotes.delete(n);
+        }
+    }
+
+    const Player = new MidiPlayer.Player(function(event) {
+        if (event.name === 'Note on' || event.name === 'Note off') {
+            const midiNote = event.noteNumber;
+            const velocity = (event.name === 'Note on') ? event.velocity : 0;
+            const status = (event.name === 'Note on' && velocity > 0) ? 0x90 : 0x80;
+
+            sendMidi(status, midiNote, velocity);
+
+            const noteName = Object.keys(noteToMidi).find(key => noteToMidi[key] === midiNote);
+            if (noteName) {
+                const keyEl = document.querySelector(`[data-note="${noteName}"]`);
+                if (keyEl) {
+                    if (status === 0x90) keyEl.classList.add('active');
+                    else keyEl.classList.remove('active');
+                }
+            }
+        }
+    });
+
+    document.getElementById('midiFileInput').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        document.getElementById('upload-label').innerText = "✅ " + file.name;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            Player.loadArrayBuffer(e.target.result);
+            document.getElementById('file-info').innerText = `Partition chargée `;
+        };
+        reader.readAsArrayBuffer(file);
+    });
+
+    document.querySelectorAll('.white, .black').forEach(key => {
+        key.addEventListener('pointerdown', (e) => {
+            e.preventDefault();
+            key.classList.add('active');
+            sendMidi(0x90, noteToMidi[key.dataset.note], 127);
+        });
+        const stopNote = () => {
+            if (key.classList.contains('active')) {
+                const midi = noteToMidi[key.dataset.note];
+                key.classList.remove('active');
+                sendMidi(0x80, midi, 0);
+            }
+        };
+        window.addEventListener('pointerup', stopNote);
+        key.addEventListener('pointercancel', stopNote);
+    });
+
+    window.addEventListener('load', () => {
+        initWebSocket();
+        setMode('semi');
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="fr">
+<!--Intitulé de la page web-->
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Favicon pour l'icon CYU de la page web -->
+  <link rel="shortcut icon" href="icon/Tampon-CY-Education.png" type="image/x-icon">
+  <!-- Inclusion de la bibliothèque w3.css -->
+  <link rel="stylesheet" href="w3.css" />
+  <!--Nom de la page web-->
+  <title>IHM Maintenance Orphéa </title>
+</head>
+
+
+<!-- DÉBUT BODY -->
+
+<body class="w3-paper">
+  <!-- Titre de la page web  -->
+
+  <header class="w3-container w3-light-grey w3-padding-16 w3-center">
+    <h1 class="w3-xxlarge"><b>Orphéa – Interface de Maintenance</b></h1>
+  </header>
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+  </head>
+  <h3 class="w3-center w3-paper w3-bold">SOLÉNOÏDES</h3>
+  <!-- DÉBUT Piano en 3D -->
+  <div class="wrap">
+    <div class="keyboard" id="keyboard">
+      <!--14 touches blanches -->
+      <div class="white-keys" id="whiteKeys">
+        <div class="white" data-note="C1">
+          <div class="white-label">
+            <h3>SOL1<br>C1</h3>
+          </div>
+        </div>
+        <div class="white" data-note="D1">
+          <div class="white-label">
+            <h3>SOL3<br>D1</h3>
+          </div>
+        </div>
+        <div class="white" data-note="E1">
+          <div class="white-label">
+            <h3>SOL5<br>E1</h3>
+          </div>
+        </div>
+        <div class="white" data-note="F1">
+          <div class="white-label">
+            <h3>SOL6<br>F1</h3>
+          </div>
+        </div>
+        <div class="white" data-note="G1">
+          <div class="white-label">
+            <h3>SOL8<br>G1</h3>
+          </div>
+        </div>
+        <div class="white" data-note="A1">
+          <div class="white-label">
+            <h3>SOL10<br>A1</h3>
+          </div>
+        </div>
+        <div class="white" data-note="B1">
+          <div class="white-label">
+            <h3>SOL12<br>B1</h3>
+          </div>
+        </div>
+        <div class="white" data-note="C2">
+          <div class="white-label">
+            <h3>SOL13<br>C2</h3>
+          </div>
+        </div>
+        <div class="white" data-note="D2">
+          <div class="white-label">
+            <h3>SOL15<br>D2</h3>
+          </div>
+        </div>
+        <div class="white" data-note="E2">
+          <div class="white-label">
+            <h3>SOL17<br>E2</h3>
+          </div>
+        </div>
+        <div class="white" data-note="F2">
+          <div class="white-label">
+            <h3>SOL18<br>F2</h3>
+          </div>
+        </div>
+        <div class="white" data-note="G2">
+          <div class="white-label">
+            <h3>SOL20<br>G2</h3>
+          </div>
+        </div>
+        <div class="white" data-note="A2">
+          <div class="white-label">
+            <h3>SOL22<br>A2</h3>
+          </div>
+        </div>
+        <div class="white" data-note="B2">
+          <div class="white-label">
+            <h3>SOL24<br>B2</h3>
+          </div>
+        </div>
+      </div>
+      <!--10 touches noires -->
+      <div class="black-keys" aria-hidden="true">
+        <div class="black" data-note="C1#" style="left:7.25%">
+          <div class="black-label">SOL2<br>C1#</div>
+        </div>
+        <div class="black" data-note="D#" style="left: 14.5%">
+          <div class="black-label">SOL4<br>D1#</div>
+        </div>
+        <div class="black" data-note="F#" style="left: 28.75%">
+          <div class="black-label">SOL7<br>F1#</div>
+        </div>
+        <div class="black" data-note="G#" style="left:35.75%">
+          <div class="black-label">SOL9<br>G1#</div>
+        </div>
+        <div class="black" data-note="A#" style="left:43%">
+          <div class="black-label">SOL11<br>A1#</div>
+        </div>
+        <div class="black" data-note="C#2" style="left:57.25%">
+          <div class="black-label">SOL14<br>C2#</div>
+        </div>
+        <div class="black" data-note="D#2" style="left:64.5%">
+          <div class="black-label">SOL16<br>D2#</div>
+        </div>
+        <div class="black" data-note="F#2" style="left:78.75%">
+          <div class="black-label">SOL19<br>F2#</div>
+        </div>
+        <div class="black" data-note="G#2" style="left:85.75%">
+          <div class="black-label">SOL21<br>G2#</div>
+        </div>
+        <div class="black" data-note="A#2" style="left:93%">
+          <div class="black-label">SOL23<br>A2#</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- FIN Piano en 3D -->
+
+  <!-- DÉBUT boutons 4 effets -->
+  <div class="w3-border effects-container w3-center w3-margin">
+    <h3 class="w3-center w3-paper w3-bold">EFFETS</h3>
+    <button id="Eff1" class="w3-button w3-red btn-effect" style="width:150px">
+      <h6>Eff1</h6>
+    </button>
+    <button id="Eff2" class="w3-button w3-red btn-effect" style="width:150px">
+      <h6>Eff2</h6>
+    </button>
+    <button id="Eff3" class="w3-button w3-red btn-effect" style="width:150px">
+      <h6>Eff3</h6>
+    </button>
+    <button id="Eff4" class="w3-button w3-red btn-effect" style="width:150px">
+      <h6>Eff4</h6>
+    </button>
+  </div>
+  <!-- FIN boutons 4 effets -->
+
+  <!-- DÉBUT ALimentations -->
+  <div class="w3-container effects-container w3-margin">
+    <h3 class="w3-center w3-bold">ALIMENTATIONS</h3>
+    <div id="power-grid">
+      <div class="power-item">
+        <div id="V3_3" class="power-led off"></div><span>+3.3V</span>
+      </div>
+      <div class="power-item ">
+        <div id="V5" class="power-led off"></div><span>+5V</span>
+      </div>
+      <div class="power-item ">
+        <div id="V9" class="power-led off"></div><span>+9V</span>
+      </div>
+      <div class="power-item ">
+        <div id="V12" class="power-led off"></div><span>+12V</span>
+      </div>
+      <div class="power-item ">
+        <div id="V24" class="power-led off"></div><span>+24V</span>
+      </div>
+    </div>
+  </div>
+  <!-- FIN ALimentations -->
+
+  <!-- DÉBUT Pré-calcul de la musique -->
+  <div class="preload-box">
+    <div class="preload-title">Pré-calcul de la musique</div>
+    <div class="preload-info">Musique sélectionnée : <span id="musicName">Aucune</span></div>
+    <div class="preload-info">Total de notes : <span id="totalNotes">0</span></div>
+    <div class="preload-info">Note en cours : <span id="currentNote">0</span></div>
+    <div class="preload-info">Avancement : <span id="percent">0%</span></div>
+    <div class="progress-container">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+  </div>
+  <!-- FIN Pré-calcul de la musique -->
+
+  <!-- DÉBUT main content -->
+  <main class="w3-paper">
+    <!--p id="SOL2_Id">vert</p>--><!--onmousedown="mouseDown()"-->
+    <!--<div class="w3-row w3-margin">-->
+    <!-- ON/OFF -->
+    <!--<div class="w3-col s12 m6 l4 w3-padding w3-center">-->
+    <!-- Console de débug -->
+    <div class="w3-container w3-border w3-black w3-margin">
+      <h3 class="w3-text-white">Console de débogage</h3>
+      <pre id="debug_console"
+        style="background-color: black;color: lime;height: 150px;overflow-y: auto;padding: 10px;font-family: monospace;"></pre>
+    </div>
+  </main>
+  <!-- FIN main content -->
+  <footer class="w3-container w3-paper">
+    <h3 class="w3-row w3-paper w3-center">© W. LE COËNT, L. SALVATORE, Q. PERSBOST, BUT3 GEII ESE 2025-2026</h3>
+  </footer>
+  <script src="script.js"></script>
+</body>
+
+</html>

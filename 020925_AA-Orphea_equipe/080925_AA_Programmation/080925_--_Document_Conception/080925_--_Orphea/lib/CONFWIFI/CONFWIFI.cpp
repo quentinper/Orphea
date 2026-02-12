@@ -79,7 +79,7 @@ void CONFWIFI::onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, A
             uint8_t velocity = data[2];
 
             if (status >= 0x80) {
-                // Appel direct à votre moteur audio Orphea
+                // Appel direct au moteur audio Orphea
                 Serial1.write(status); Serial1.write(noteNum); Serial1.write(velocity);
                 myOrphea.playMidiNote(status, noteNum, velocity);
             }

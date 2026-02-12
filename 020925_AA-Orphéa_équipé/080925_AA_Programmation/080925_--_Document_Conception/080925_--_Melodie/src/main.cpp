@@ -36,6 +36,30 @@ GESTNOTES myGestNotes;
 #define NOTE_23 48
 #define NOTE_24 49
 
+#define SOL_1  53
+#define SOL_2  3
+#define SOL_3  4
+#define SOL_4  5
+#define SOL_5  6
+#define SOL_6  7
+#define SOL_7  8
+#define SOL_8  9
+#define SOL_9  10
+#define SOL_10  11
+#define SOL_11 12
+#define SOL_12 13
+#define SOL_13  14
+#define SOL_14  15
+#define SOL_15  16
+#define SOL_16  17
+#define SOL_17  50
+#define SOL_18  51
+#define SOL_19  20
+#define SOL_20  21
+#define SOL_21 22
+#define SOL_22  23
+#define SOL_23  24
+#define SOL_24  25
 
 const int buttonPins[NUM_BUTTONS] = 
 {
@@ -63,6 +87,7 @@ void setup()
 void loop()
 {
   // Scrutation logicielle pour détecter les fronts
+  /*
   for (int i = 0; i < NUM_BUTTONS; i++)
   {
     bool currentState = digitalRead(buttonPins[i]);
@@ -137,7 +162,22 @@ void loop()
     }
   }
 
-  delay(10); // Petit délai pour éviter le rebond (debouncing simple), ajustez si nécessaire
+  delay(10);
+  */ // Petit délai pour éviter le rebond (debouncing simple), ajustez si nécessaire
+  if (Serial1.available() >= 3) 
+    {
+      Serial.print("test");
+      uint8_t status = Serial1.read();// 0x90 ou 0x80
+      uint8_t data1 = Serial1.read();//  note(0-127)
+      uint8_t data2 = Serial1.read();//  velocity(0-127) -> 0 = note off
+      if (status >= 0x80) {
+        if(status==0x90)
+         digitalWrite(SOL_2,HIGH);
+        else if(status==0x80)
+          digitalWrite(SOL_2,LOW);
+      }
+    }
+
 }
 
 int getNote(int i)

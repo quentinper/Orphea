@@ -61,6 +61,9 @@ GESTNOTES myGestNotes;
 #define SOL_23  24
 #define SOL_24  25
 
+
+
+
 const int buttonPins[NUM_BUTTONS] = 
 {
   NOTE_1, NOTE_2, NOTE_3, NOTE_4, NOTE_5, NOTE_6, NOTE_7, NOTE_8, NOTE_9, NOTE_10, 
@@ -68,11 +71,47 @@ const int buttonPins[NUM_BUTTONS] =
   NOTE_20, NOTE_21, NOTE_22, NOTE_23, NOTE_24
 }; // Exemple de broches (ajustez selon votre carte)
 
+const int solenoidPins[NUM_BUTTONS] = 
+{ 
+  SOL_1, SOL_2, SOL_3, SOL_4, SOL_5, SOL_6, 
+  SOL_7, SOL_8, SOL_9, SOL_10, SOL_11, SOL_12, SOL_13, SOL_14, SOL_15, SOL_16, SOL_17,
+  SOL_18, SOL_19, SOL_20, SOL_21, SOL_22, SOL_23, SOL_24 
+}; // Broches des solénoïdes correspondantes (ajustez selon votre carte)
+
 volatile bool risingEdgeDetected[NUM_BUTTONS] = {false};
 volatile bool fallingEdgeDetected[NUM_BUTTONS] = {false};
 bool lastButtonStates[NUM_BUTTONS] = {HIGH}; // État précédent de chaque bouton (HIGH par défaut avec pull-up)
 bool DEBUG = false;
 int getNote(int i);
+
+int detectSol(int note)
+{
+  if(note == 60)return SOL_1;
+  if(note == 61)return SOL_2;
+  if(note == 62)return SOL_3;
+  if(note == 63)return SOL_4;
+  if(note == 64)return SOL_5;
+  if(note == 65)return SOL_6;
+  if(note == 66)return SOL_7;
+  if(note == 67)return SOL_8;
+  if(note == 68)return SOL_9;
+  if(note == 69)return SOL_10;
+  if(note == 70)return SOL_11;
+  if(note == 71)return SOL_12;
+  if(note == 72)return SOL_13; 
+  if(note == 73)return SOL_14; 
+  if(note == 74)return SOL_15; 
+  if(note == 75)return SOL_16; 
+  if(note == 76)return SOL_17; 
+  if(note == 77)return SOL_18; 
+  if(note == 78)return SOL_19; 
+  if(note == 79)return SOL_20; 
+  if(note == 80)return SOL_21; 
+  if(note == 81)return SOL_22; 
+  if(note == 82)return SOL_23; 
+  if(note == 83)return SOL_24;
+}
+
 void setup()
 {
   Serial.begin(115200);
@@ -81,7 +120,9 @@ void setup()
   for (int i = 0; i < NUM_BUTTONS; i++)
   {
     pinMode(buttonPins[i], INPUT_PULLUP); // Configuration en entrée avec pull-up interne
+    pinMode(solenoidPins[i], OUTPUT); // Configuration des broches des solénoïdes en sortie digitalWrite(solenoidPins[i], LOW); // Assurez-vous que les solénoïdes sont éteints au démarrage
   }
+  
 }
 
 void loop()
@@ -166,19 +207,21 @@ void loop()
   */ // Petit délai pour éviter le rebond (debouncing simple), ajustez si nécessaire
   if (Serial1.available() >= 3) 
     {
-      Serial.print("test");
+     // Serial.print("test");
       uint8_t status = Serial1.read();// 0x90 ou 0x80
       uint8_t data1 = Serial1.read();//  note(0-127)
       uint8_t data2 = Serial1.read();//  velocity(0-127) -> 0 = note off
       if (status >= 0x80) {
-        if(status==0x90)
-         digitalWrite(SOL_2,HIGH);
-        else if(status==0x80)
-          digitalWrite(SOL_2,LOW);
+        if(status==0x90){
+         digitalWrite(detectSol(data1),HIGH);
+        }
+        else if(status==0x80){
+          digitalWrite(detectSol(data1),LOW);
       }
     }
 
-}
+    }
+  }
 
 int getNote(int i)
 {

@@ -19,8 +19,6 @@ private:
     uint8_t _notesPlayed[12];
     uint8_t _previousNotesPlayed[12];
     // void _readSol(uint8_t notes[12]);
-    void sendNoteOff(byte note);
-    void sendNoteOn(byte note, byte velocity);
     int getNote(int i);
     int _buttonPins[12];
     volatile bool _risingEdgeDetected[12];

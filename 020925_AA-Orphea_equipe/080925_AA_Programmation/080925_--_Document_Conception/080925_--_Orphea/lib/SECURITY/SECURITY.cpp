@@ -17,6 +17,10 @@ SECURITY::SECURITY()
 
 Adafruit_NeoPixel led(1, 48, NEO_GRB + NEO_KHZ800);
 
+/*************************************************************************************************
+ * @brief Crée une tâche de vérification des tensions sur les broches analogiques.
+ *        Cette tâche est exécutée sur le core 1 et vérifie si les tensions sont inférieures à 3.1V.
+ **************************************************************************************************/
 void SECURITY::createTaskCheckVoltages()
 {
   xTaskCreatePinnedToCore(
@@ -36,6 +40,10 @@ void SECURITY::createTaskCheckVoltages()
   );
 }
 
+/*************************************************************************************************
+ * @brief Vérifie les tensions sur les broches analogiques et allume une LED intégrée si une 
+ *        tension est inférieure à 3.1V.
+ **************************************************************************************************/
 void SECURITY::checkVoltages() {
     led.begin(); 
   // Implémente la vérification des tensions si nécessaire

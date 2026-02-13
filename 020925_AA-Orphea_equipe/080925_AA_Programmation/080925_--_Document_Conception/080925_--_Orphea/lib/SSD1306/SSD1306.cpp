@@ -26,6 +26,10 @@ Adafruit_SSD1306 oled(SCREEN_WIDTH, SCREEN_HEIGHT); // Définition unique
 GFXcanvas1 canvas(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 
+/*************************************************************************************************
+ * @brief Initialise l'écran OLED avec l'adresse spécifiée
+ * @param SSD1306_adr : Adresse I2C de l'écran SSD1306
+ **************************************************************************************************/
 void SSD1306::beginOLED(uint8_t SSD1306_adr)
 {
     _adress = SSD1306_adr;

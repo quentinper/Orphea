@@ -41,7 +41,6 @@ public:
     SOLENOIDE();
     void detectionAutomatedMode();
     void automatedMode(uint8_t melodie);
-    void semiAutomatedMode();
     int detectionSolenoide(int freq);
 
 private:

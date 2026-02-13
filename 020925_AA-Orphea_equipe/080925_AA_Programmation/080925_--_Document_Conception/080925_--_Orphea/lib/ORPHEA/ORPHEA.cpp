@@ -63,13 +63,21 @@ int64_t dt = 0;
 //Objet
 Note activeNotes[MAX_NOTES];
 
-// Fonction pour calculer la fréquence MIDI (note 60 = 261.63 Hz pour Do4)
+/*************************************************************************************************
+ * @brief Convertit un numéro de note MIDI en fréquence en Hz. La formule utilisée est basée sur 
+ *        la norme MIDI, où la note 69 correspond à A4 (440 Hz).
+ * @return La fréquence en Hz correspondant à la note MIDI donnée.
+ **************************************************************************************************/
 float ORPHEA::midiToFrequency(int midiNote) 
 {
   return 440.0 * pow(2.0, (midiNote - 69) / 12.0);
 }
 
-
+/*************************************************************************************************
+ * @brief Ajoute une note active à la liste des notes actives, en initialisant sa fréquence, 
+ *        son état ADSR et en pré-calculant les incréments de phase pour les harmoniques
+ * @param midiNote : Numéro de la note MIDI à ajouter
+ **************************************************************************************************/
 void ORPHEA::addNote(int midiNote) {
     for (int i = 0; i < MAX_NOTES; i++) {
         if (!activeNotes[i].active && !activeNotes[i].releasing) {
@@ -81,7 +89,7 @@ void ORPHEA::addNote(int midiNote) {
             for (int h = 0; h < 3; h++) {
                 activeNotes[i].phase[h] = 0;
                 // Calcul de l'incrément une bonne fois pour toutes
-                activeNotes[i].phaseInc[h] = (uint32_t)((freq * (h + 1) * 4294967296.0f) / I2S_SAMPLE_RATE);
+                activeNotes[i].phaseInc[h] = (uint32_t)((freq * (h + 1) * 4294967296.0f) / I2S_SAMPLE_RATE); // 4294967296.0f = 2^32 pour la précision de la phase
             }
             
             activeNotes[i].active = true;
@@ -93,6 +101,10 @@ void ORPHEA::addNote(int midiNote) {
     }
 }
 
+/*************************************************************************************************
+ * @brief Supprime une note active de la liste des notes actives, en passant son état à RELEASE
+ * @param midiNote : Numéro de la note MIDI à supprimer
+ **************************************************************************************************/
 void ORPHEA::removeNote(int midiNote) {
   for (int i = 0; i < MAX_NOTES; i++) {
     if (activeNotes[i].midiNote == midiNote && activeNotes[i].active) {
@@ -104,6 +116,13 @@ void ORPHEA::removeNote(int midiNote) {
   }
 }
 
+/*************************************************************************************************
+ * @brief Génère un échantillon audio en mixant les notes actives, en appliquant une enveloppe ADSR
+ *        et en utilisant une synthèse additive avec des harmoniques.
+ *        Les échantillons sont calculés en temps réel à partir des phases et des incréments 
+ *        pré-calculés pour chaque note active.
+ * @return Un échantillon audio mixé en format 16 bits signé (int16_t) prêt à être envoyé via I2S.
+ **************************************************************************************************/
 int16_t ORPHEA::generateSample() {
     float mixedSample = 0.0f;
     
@@ -160,7 +179,13 @@ int16_t ORPHEA::generateSample() {
     return (int16_t)(mixedSample * 32767.0f);
 }
 
-// Fonction principale pour traiter les commandes MIDI et jouer la musique
+/*************************************************************************************************
+ * @brief Traite une commande MIDI reçue, en ajoutant ou supprimant des notes actives selon 
+ *        le type de message (Note On/Off).
+ * @param status  : Status MIDI (0x90 = Note On, 0x80 = Note Off)
+ * @param data1   : Numéro de la note MIDI à ajouter/supprimer
+ * @param data2   : Velocity de la note MIDI (0 = Note Off)
+ **************************************************************************************************/
 void ORPHEA::playMidiNote(uint8_t status, uint8_t data1, uint8_t data2) {
   if(LATENCY_CHECK)
       {
@@ -175,7 +200,12 @@ void ORPHEA::playMidiNote(uint8_t status, uint8_t data1, uint8_t data2) {
   // Ajoute d'autres commandes MIDI si besoin (velocity, pitch bend)
 }
 
-// Tâche pour la réception MIDI et génération audio (exécutée sur core 0)
+/*************************************************************************************************
+ * @brief Tâche principale de traitement MIDI/audio. Cette fonction tourne en boucle, lisant les 
+ *        commandes MIDIdepuis le port série, générant les échantillons audio en
+ *        temps réel et les envoyant via I2S. Elle gère également la latence de traitement pour les tests.
+ * @param pvParameters : Paramètres de la tâche (non utilisés ici)
+ **************************************************************************************************/
 void ORPHEA::midiAudioTask(void *pvParameters) 
 {
   Serial1.begin(MIDI_BAUDRATE, SERIAL_8N1, RX_PIN, TX_PIN); 
@@ -218,6 +248,10 @@ void ORPHEA::midiAudioTask(void *pvParameters)
   }
 }
 
+/*************************************************************************************************
+ * @brief Initialise le système audio ORPHEA, configure I2S et crée la tâche de traitement MIDI/audio.
+ *       Cette fonction doit être appelée une fois au démarrage pour lancer le moteur de synthèse.
+ **************************************************************************************************/
 void ORPHEA::createTaskMidiAudio()
 {
 

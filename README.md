@@ -127,6 +127,7 @@ Ce nom indique les informations suivantes :
 | 120 | Notice de fabrication  |
 | 130 | Algorigramme  |
 | 140 | Notice de Compilation  |
+| 150 | Diagramme de classe  |
 ### Gestion des Révisions
 
 L'indice de révision assure le suivi chronologique des modifications apportées aux documents. Il suit une progression séquentielle stricte, débutant par un double tiret pour la création, suivi d'une incrémentation alphabétique.
